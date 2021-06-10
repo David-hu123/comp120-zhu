@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Union Strike Folk Song</title>
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+<h1 id="title">Union Strike Folk Song</h1>
+
+<video src="https://www.cs.tufts.edu/comp/120/butwehavethepower.mp4" id="butwehavethepower" controls></video>
+<div id="lyrics"></div>
+
+<script>
+    // Complete this section and create a CSS file named style.css
+    
+    
+  //subtitle
+  var captionData=[
+  {"id":1,"text":"&#127925Come gather round, children, It's high time ye learned&#127925","start":"6","end":"10"},
+  {"id":2,"text":"&#127925'Bout a hero named Homer, And a devil named Burns.&#127925","start":"10","end":"16"},
+
+  {"id":3,"text":"&#127925We'll march 'till we drop the girls and the fellas.&#127925","start":"16","end":"21"},
+  {"id":4,"text":"&#127925We'll fight 'till the death. Or else fold like umbrellas.&#127925","start":"21","end":"27"},
+  {"id":5,"text":"[speak]","start":"27","end":"38"},
+
+  {"id":6,"text":"&#127925So we'll march day and night. By the big cooling tower.&#127925","start":"38","end":"43"},
+  {"id":7,"text":"&#127925They have the plant. But we have the power&#127925","start":"43","end":"49"},
+  {"id":8,"text":"[speak]","start":"49","end":"53"},
+
+  {"id":9,"text":"Lenny:Now do \"Classical Gas!\"","start":"53","end":"54"},
+
+  {"id":10,"text":"[&#127925music]","start":"54","end":"66"},
+  {"id":11,"text":"","start":"66","end":"71"},
+
+
+  {"id":12,"text":"&#127925So we'll march day and night. By the big cooling tower.&#127925","start":"71","end":"77"},
+  {"id":13,"text":"&#127925They have the plant. But we have the power.&#127925","start":"77","end":"81"},
+  {"id":14,"text":"&#127925So we'll march day and night. By the big cooling tower.&#127925","start":"81","end":"87"},
+  {"id":15,"text":"&#127925They have the plant. But we have the power.&#127925","start":"87","end":"91"},
+
+  {"id":16,"text":"[speak]","start":"91","end":"111"},
+
+
+  ];
+
+  var myvideo=document.getElementById("butwehavethepower");
+  var mycaption=document.getElementById("lyrics");
+
+               
+              
+
+
+// Listener
+myvideo.ontimeupdate = function() {myFunction()};
+
+function myFunction() {
+  // current video time
+  var ctime = myvideo.currentTime;
+  // display the subtitle according current video time and the subtitle information
+  for(var i=0;i<captionData.length;i++){
+
+    if(ctime>captionData[i].start && ctime<captionData[i].end){
+      mycaption.innerHTML=captionData[i].text;
+      mycaption.style.color = "#000";
+    } 
+  }
+}
+
+
+</script>
+</body>
+</html>    
