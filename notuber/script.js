@@ -1,52 +1,146 @@
-
+var allVehicle;
+var markers = [];
+var v_pos = [];
+var dis = [];
 function myMap() {
 var mapProp= {
   center:new google.maps.LatLng(42.352271,-71.05524200000001),
-  zoom:15,
+  zoom:2,
 };
 var map = new google.maps.Map(document.getElementById("googleMap"),mapProp);
 const image = {
     url: "car.png",
-    // size: new google.maps.Size(15, 35),
     scaledSize: new google.maps.Size(15, 35)
 };
 
-const myLatLng = [
-{ lat: 42.3453, lng: -71.0464 },
-{ lat: 42.3662, lng: -71.0621 },
-{ lat: 42.3603, lng: -71.0547 },
-{ lat: 42.3472, lng: -71.0802 },
-{ lat: 42.3663, lng: -71.0544 },
-{ lat: 42.3542, lng: -71.0704 }
-];
-new google.maps.Marker({
-    position: myLatLng[0],
-    map,
-    icon: "car.png",
-  });
-new google.maps.Marker({
-    position: myLatLng[1],
-    map,
-    icon: "car.png",
-  });
-new google.maps.Marker({
-    position: myLatLng[2],
-    map,
-    icon: "car.png",
-  });
-new google.maps.Marker({
-    position: myLatLng[3],
-    map,
-    icon: "car.png",
-  });
-new google.maps.Marker({
-    position: myLatLng[4],
-    map,
-    icon: "car.png",
-  });
-new google.maps.Marker({
-    position: myLatLng[5],
-    map,
-    icon: "car.png",
-  });
+Object.size = function(obj) {
+  var size = 0,
+    key;
+  for (key in obj) {
+    if (obj.hasOwnProperty(key)) size++;
+  }
+  return size;
+};
+
+window.onload=function()
+{
+    //show current location
+    if (navigator.geolocation)
+    {
+        navigator.geolocation.getCurrentPosition(showLocation);
+    }
+}
+    //get nearby vehicle location
+    var url = "https://jordan-marsh.herokuapp.com/rides";
+    var params = "username=DCEZBDzN&lat=42.3453&lng=-71.0464";
+
+    var http = new XMLHttpRequest();
+    http.open('POST', url, true);
+
+    http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    http.onreadystatechange = function() {//Call a function when the state changes.
+       if(http.readyState == 4 && http.status == 200) {
+            
+            var allVehicle = JSON.parse(http.responseText)
+            var number = Object.size(allVehicle);
+            
+            for (let i = 0; i < number; i++) {
+                v_pos[i] = new google.maps.LatLng(allVehicle[i].lat, allVehicle[i].lng);
+                markers[i] = new google.maps.Marker({
+                    position: v_pos[i],
+                    map: map,
+                    icon: "car.png",
+                    id: allVehicle[i].id
+                    
+                });
+                var infowindow = new google.maps.InfoWindow({
+                    content: allVehicle[i].username
+                });
+                // infowindow.open(map, markers[i]);
+            }
+            
+
+       } 
+    }
+    http.send(params);
+    
+
+
+  
+
+function showLocation(position) {
+    
+    const marker= new google.maps.Marker({
+        position: { lat: position.coords.latitude, lng: position.coords.longitude },
+        map,
+      });
+
+//get nearby vehicle location
+    var url = "https://jordan-marsh.herokuapp.com/rides";
+    var params = "username=DCEZBDzN&lat=42.3453&lng=-71.0464";
+
+    var http = new XMLHttpRequest();
+    http.open('POST', url, true);
+
+    http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    http.onreadystatechange = function() {//Call a function when the state changes.
+       if(http.readyState == 4 && http.status == 200) {
+            
+            var allVehicle = JSON.parse(http.responseText)
+            var number = Object.size(allVehicle);
+            
+            for (let i = 0; i < number; i++) {
+                v_pos[i] = new google.maps.LatLng(allVehicle[i].lat, allVehicle[i].lng);
+                markers[i] = new google.maps.Marker({
+                    position: v_pos[i],
+                    map: map,
+                    icon: "car.png",
+                    id: allVehicle[i].id
+                    
+                });
+                google.maps.event.addListener(markers[i], 'click', function() {
+                    const infowindow_vehicle = new google.maps.InfoWindow({
+                        content: "The distance from this vehicle and your location is " + Math.round(dis[i]) + "mile",
+                    });
+                    infowindow_vehicle.open({
+                      anchor: markers[i],
+                      map,
+                      shouldFocus: false,
+                    });
+                });
+                // infowindow.open(map, markers[i]);
+            }
+            
+
+       } 
+    }
+    http.send(params);
+    //calculate the min distance
+    var minDistance=1000000;
+    var vehicleIndex;
+    for (let i = 0; i < Object.size(v_pos); i++) {
+        var newDistance = google.maps.geometry.spherical.computeDistanceBetween(v_pos[i], marker.position)/1609.34
+        
+        if (newDistance<minDistance) {
+            minDistance=newDistance;
+            vehicleIndex=i;
+        }
+        dis[i]=newDistance;
+    }
+    const infowindow = new google.maps.InfoWindow({
+        content: "The closet vehicle location is " + v_pos[vehicleIndex]+", and the distance from your current location is " + Math.round(minDistance) + "mile",
+    });
+    
+    marker.addListener("click", () => {
+        infowindow.open({
+          anchor: marker,
+          map,
+          shouldFocus: false,
+        });
+    });
+
+
+    var line = new google.maps.Polyline({path: [marker.position, v_pos[vehicleIndex]], map: map});
+
+}
 }
