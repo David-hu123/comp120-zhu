@@ -31,8 +31,9 @@ window.onload=function()
     }
 }
     //get nearby vehicle location
-    var url = "https://jordan-marsh.herokuapp.com/rides";
-    var params = "username=DCEZBDzN&lat=42.3453&lng=-71.0464";
+    var url = "https://fathomless-refuge-73113.herokuapp.com/rides";
+    // var url = "http://localhost:5000/rides";
+    var params = "username=DCEZBDzN&lat=52.3453&lng=-71.0464";
 
     var http = new XMLHttpRequest();
     http.open('POST', url, true);
@@ -44,7 +45,7 @@ window.onload=function()
             var allVehicle = JSON.parse(http.responseText)
             var number = Object.size(allVehicle);
             
-            for (let i = 0; i < number; i++) {
+            for (var i = 0; i < number; i++) {
                 v_pos[i] = new google.maps.LatLng(allVehicle[i].lat, allVehicle[i].lng);
                 markers[i] = new google.maps.Marker({
                     position: v_pos[i],
@@ -89,13 +90,13 @@ function showLocation(position) {
             var allVehicle = JSON.parse(http.responseText)
             var number = Object.size(allVehicle);
             
-            for (let i = 0; i < number; i++) {
+            for (var i = 0; i < number; i++) {
                 v_pos[i] = new google.maps.LatLng(allVehicle[i].lat, allVehicle[i].lng);
                 markers[i] = new google.maps.Marker({
                     position: v_pos[i],
                     map: map,
                     icon: "car.png",
-                    id: allVehicle[i].id
+                    id: allVehicle[i].id,
                     
                 });
                 google.maps.event.addListener(markers[i], 'click', function() {
@@ -118,7 +119,7 @@ function showLocation(position) {
     //calculate the min distance
     var minDistance=1000000;
     var vehicleIndex;
-    for (let i = 0; i < Object.size(v_pos); i++) {
+    for (var i = 0; i < Object.size(v_pos); i++) {
         var newDistance = google.maps.geometry.spherical.computeDistanceBetween(v_pos[i], marker.position)/1609.34
         
         if (newDistance<minDistance) {
