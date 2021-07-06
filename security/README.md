@@ -11,4 +11,4 @@ Only myself.
 3.Say approximately how many hours you have spent completing the lab.
 
 
-1 hour.
+5 hour.
