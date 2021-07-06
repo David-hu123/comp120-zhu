@@ -1,0 +1,116 @@
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+    <title>Security and Privacy Assessment of Ride-Hailing Service</title>
+    <link rel="stylesheet" href="index.css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="utf-8" />
+
+</head>
+
+<body>
+
+<div class="stuff">
+    <br><br>
+
+    <h1 CLASS="picc_text">Security and Privacy Assessment of Ride-Hailing Service</h1>
+    <hr class="hr_1"/>
+    <br>
+    <p class="head">Introduction</p>
+    <hr />
+    <p class="p_1">A start-up company named notuber build an APP, this APP can provide the vehicle information for
+        their user, so user can get to access the nearby vehicle and take a ride.</br>
+
+        However, when they publish the earlist version of this APP, it got hacked over and over again. Then, the CEO
+        decide to hire a security experts to solve this. Now, I decide to apply for this job by finding their security 
+        problem.
+
+    </p>
+    
+
+    <br>
+    <p class="head">Methodology</p>
+    <hr />
+        <p class="p_1">
+            Burp suite for request.
+
+        </p>
+    <br>
+    <p class="head">Abstract of findings</p>
+    <hr />
+    
+    <p class="p_3"> SQL injection</p>
+
+        <li class="p_1">The SQL query for this APP is not limited, which means anything can be inject to the query statement,
+        then the attacker can hack all the information from the database. For example, a user can get all the user information, even the administrator.</li>
+        <br>
+    <p class="p_3"> XSS </p>
+
+        <li class="p_1">
+            Some feedback comes from the database, and combine with the html code to the browser. If some html code inserted into the database, then the page will look not like the original page. For example, redirect to other page.
+        </li>
+        <br>
+    <p class="p_3"> CORS </p>
+
+        <li class="p_1">
+            This APP is allowed to cross origin, so if it contain some cookies to keep the user login status at the future, the other website may made some bait at their website and let user ciick the link, then user account chance something, like increase the tip for the driver.
+        </li>
+
+
+    <br>
+    <p class="head">Issues Found</p>
+    <hr />
+        <p class="p_3"> SQL injection</p>
+        <ul>
+        <li class="p_1">Location: '/passenger.json', '/vehicle.json'.</li>
+        <li class="p_1">The query is usernameEntry, this can be anything. For example, if a user enter the word like " a or 1=1", then the SQL will execute like "SELECT * FROM passengers WHERE username =  a or 1=1". Since 1=1 is true, so it will return all the passengers from database.
+        </li>
+        <li class="p_1">
+            Resolution: use prepare statement, like /update, the query value will be treated as a whole.
+        </li>
+    </ul>
+    <br>
+    
+        <p class="p_3"> XSS</p>
+        <ul>
+        <li class="p_1">Location: main page</li>
+        <li class="p_1">
+            result.rows[count].username can be some thing different, like <xmp><script>alert('xss')<script></xmp>, then the page will display a alert.
+
+        </li>
+        <li class="p_1">
+            Resolution: if(username!=null){
+                username=username.replace(/&lt;/g,"<");
+                username=username.replace(/&nbsp;/g," ");
+                username=username.replace(/&gt;/g,">");
+            
+        </li>
+    </ul>
+    <br>
+    
+        <p class="p_3"> CORS</p>
+        <ul>
+        <li class="p_1">Location: /update /rides </li>
+        <li class="p_1">
+            This site is allowed cross-origin, if the user click a link at another malicious page, like an img link
+            <xmp><img style="display:none" src="http://localhost:3000/tip?tip=1000" alt=""></xmp>, Then the user may give $1000 for one ride.
+        </li>
+        <li class="p_1">Resolution: set refer to stop some website get access to this APP. Or set token. </li>
+    </ul>
+        
+
+    <br>
+    <p class="head">Conclusion</p>
+    <hr />
+    <p class="p_1">
+        This website is vulnerable, so there are a lot of things to be added. 
+        In the future, even we can keep the security, when face of quantity of user and high access frequency, this website should handle the pressure.
+
+    </p>
+    
+        
+</div>
+</body>
+</html>
